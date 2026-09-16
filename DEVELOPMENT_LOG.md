@@ -27,5 +27,10 @@
 
 ### 未完成
 
-- 尚未建立遠端 GitHub repository，也尚未部署 GitHub Pages。
+- 尚未部署 GitHub Pages。
 - 尚未連接 Firebase 或進行多支手機實機測試。
+
+### GitHub 發布
+
+- 建立公開 repository：`https://github.com/jesuswaytaipeisrv/mooncake-game`。
+- 以原生 Git 將本機 `main` 推送至 `origin/main`，並設定 upstream tracking。
