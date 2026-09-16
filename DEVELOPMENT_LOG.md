@@ -1,0 +1,31 @@
+# 開發紀錄
+
+## 2026-09-16
+
+### 目標
+
+依照 `jesuswaytaipeisrv/water-relay-game` 與 `jesuswaytaipeisrv/dragon-boat-race` 的主持／玩家活動模式，建立獨立的吃月餅遊戲 MVP。
+
+### 實際修改
+
+- 在固定位置 `/Users/garyhuang/Documents/Codex/mooncake-game` 建立正式專案骨架。
+- 建立主持頁、玩家加入頁、玩家連點頁與結算畫面。
+- 將同步狀態簡化為每隊單一 `biteUnits`，所有月餅進度由此推導。
+- 建立豆沙、蛋黃、抹茶三隊及中秋夜景、月餅被咬、月兔加油、連吃與彩帶動畫。
+- 將純規則拆到 `src/game-core.js`，供 Node 內建測試執行。
+- Firebase 預設不連線，避免開發測試污染既有正式資料；填入 Web App 公開設定後才啟用。
+- 瀏覽器測試時發現主持台的 250ms 重繪會覆蓋正在編輯的設定欄位；改為輸入事件立即同步，且不覆寫目前聚焦欄位。
+
+### 測試與驗證
+
+- `npm test`：6 項核心規則測試全部通過，涵蓋預設門檻、月餅邊界、外部狀態限界、分隊、月兔加油資格與下一輪重設。
+- `npm run check`：`app.js`、`src/game-core.js` 語法檢查通過。
+- 實際瀏覽器示範模式：玩家加入 → 主持分隊 → 設定每餅 5 口／1 個月餅／倒數 1 秒 → 玩家連點 5 次 → 豆沙隊勝利與結算畫面，流程通過。
+- RWD：主持頁在 390、768、1280px 的 `scrollWidth` 均未超過 `clientWidth`；玩家加入頁在三種寬度也無水平溢位；390px 玩家操作頁主按鈕完整位於視窗內。
+- 瀏覽器 console：主持、玩家與行動版頁面均無 error。
+- 下一輪按鈕未在瀏覽器點擊，以免清除本輪測試狀態；其呼叫的 `resetRoundState()` 已由單元測試確認保留分隊並清空口數。
+
+### 未完成
+
+- 尚未建立遠端 GitHub repository，也尚未部署 GitHub Pages。
+- 尚未連接 Firebase 或進行多支手機實機測試。

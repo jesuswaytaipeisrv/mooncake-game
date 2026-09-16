@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "mooncake-feast-race": {
+      "rooms": {
+        "$room": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    }
+  }
+}
