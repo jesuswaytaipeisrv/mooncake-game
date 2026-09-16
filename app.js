@@ -1,4 +1,5 @@
 import { firebaseConfig, firebaseDataRoot } from "./firebase-config.js?v=20260916-2";
+import { retryFirebaseNetwork } from "./src/firebase-retry.js?v=20260916-3";
 import {
   TEAM_META,
   STORAGE_PREFIX,
@@ -573,7 +574,7 @@ async function connectFirebase() {
       import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
     ]);
     const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-    await signInAnonymously(getAuth(app));
+    await retryFirebaseNetwork(() => signInAnonymously(getAuth(app)));
     const roomRef = ref(getDatabase(app), gamePath());
     firebaseApi = { roomRef, runTransaction, update, increment };
     await runTransaction(roomRef, (current) => current?.version === GAME_VERSION ? normalizeState(current) : createDefaultState());

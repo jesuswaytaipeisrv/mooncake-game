@@ -6,6 +6,6 @@
   "scripts": {
     "test": "node --test tests/*.test.js",
     "test:firebase": "node tests/firebase-smoke.mjs",
-    "check": "node --check app.js && node --check src/game-core.js && node --check tests/firebase-smoke.mjs"
+    "check": "node --check app.js && node --check src/game-core.js && node --check src/firebase-retry.js && node --check tests/firebase-smoke.mjs"
   }
 }
