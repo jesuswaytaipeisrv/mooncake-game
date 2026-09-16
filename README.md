@@ -16,7 +16,7 @@ GitHub repository：https://github.com/jesuswaytaipeisrv/mooncake-game
 - 每次點擊即時增加個人與隊伍口數，主持台同步顯示月餅被吃掉的動畫。
 - 落後一個月餅以上的隊伍，會定期獲得半個月餅口數的「月兔加油」。
 - 最先清空月餅盤的隊伍獲勝，結算顯示勝隊前三名貢獻者。
-- 未設定 Firebase 時使用 `localStorage` 與 `BroadcastChannel` 示範模式；設定後可跨手機即時同步。
+- 已沿用既有活動 Firebase，可跨手機即時同步；Firebase 連線失敗時才退回 `localStorage` 與 `BroadcastChannel` 示範模式。
 
 ## 本機啟動
 
@@ -37,16 +37,22 @@ http://127.0.0.1:5175/?view=host
 ```bash
 npm test
 npm run check
+npm run test:firebase
 ```
 
 網頁功能仍須以實際瀏覽器跑過主持／玩家流程，並驗證 390px、768px、1280px 三種寬度。
 
 ## Firebase 多人同步
 
-1. 在 Firebase Console 建立 Web App、啟用匿名 Authentication 與 Realtime Database。
-2. 把 Web App 公開設定填入 `firebase-config.js`。
-3. 將 `firebase-database.rules.json` 套用到 Realtime Database Rules。
-4. 重新整理主持頁，頂端應顯示「即時多人模式」。
+目前正式站沿用 `dragon-boat-race` Firebase 專案，以及提水遊戲已授權的 `water-splash-race/rooms/$room` 規則。月餅遊戲資料集中在專屬子樹：
+
+```text
+water-splash-race/rooms/mooncake-feast-race/<房間碼>
+```
+
+重新整理主持頁後，頂端應顯示「即時多人模式」。`npm run test:firebase` 會以唯一測試房號驗證匿名登入、寫入、讀回與清除，並刪除測試匿名帳號。
+
+`firebase-database.rules.json` 是未來改用獨立頂層路徑時的規則範本；不要把它整份發布到目前共用資料庫，否則會覆蓋龍舟與提水的既有規則。若要調整共用資料庫規則，必須先讀取線上完整規則後再合併。
 
 Firebase Web App 設定不是伺服器密鑰；服務帳戶 JSON、私密 token 與後端金鑰不得進入 repository。
 
@@ -63,7 +69,7 @@ Firebase Web App 設定不是伺服器密鑰；服務帳戶 JSON、私密 token 
 - `styles.css`：中秋視覺、動畫與 RWD。
 - `app.js`：瀏覽器互動、房間同步與畫面更新。
 - `src/game-core.js`：可單元測試的遊戲規則。
-- `tests/`：核心規則測試。
+- `tests/`：核心規則測試與 Firebase 線上 smoke test。
 - `docs/`：架構、設計決策與長期專案知識。
 
 ## 文件

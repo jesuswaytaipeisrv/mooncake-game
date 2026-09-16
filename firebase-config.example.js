@@ -8,3 +8,6 @@ export const firebaseConfig = {
   messagingSenderId: "YOUR_SENDER_ID",
   appId: "YOUR_APP_ID"
 };
+
+// 若與既有活動共用資料庫，請指定已獲授權且不會與其他遊戲衝突的專屬資料路徑。
+export const firebaseDataRoot = "mooncake-feast-race/rooms";

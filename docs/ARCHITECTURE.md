@@ -13,13 +13,13 @@
 - `styles.css`：視覺、動畫、觸控介面與 RWD。
 - `app.js`：房間初始化、DOM 更新、使用者事件、Firebase／示範模式同步。
 - `src/game-core.js`：狀態正規化、計分、分隊、逆轉加成與重設規則。
-- `firebase-config.js`：Firebase Web App 公開設定；預設為 `null`。
+- `firebase-config.js`：沿用活動 Firebase 的 Web App 公開設定，以及月餅遊戲專屬資料根路徑。
 
 ## 資料流
 
 玩家點擊 → `biteUnits` 與玩家 `taps` 原子遞增 → 所有客戶端收到狀態 → 由 `teamMetrics()` 推導月餅數、目前月餅咬食比例與總進度 → 主持端判定勝負。
 
-Firebase 模式以 Realtime Database transaction/update/increment 同步；未設定 Firebase 時，使用 `localStorage` 保存房間並以 `BroadcastChannel` 同步同瀏覽器分頁。
+Firebase 模式以 Realtime Database transaction/update/increment 同步。正式資料位於 `water-splash-race/rooms/mooncake-feast-race/<房間碼>`，利用既有匿名驗證規則並以專屬子樹隔離提水房間。Firebase 連線失敗時，使用 `localStorage` 保存房間並以 `BroadcastChannel` 同步同瀏覽器分頁。
 
 ## 安全限制
 

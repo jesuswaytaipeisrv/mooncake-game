@@ -27,7 +27,7 @@
 
 ### 未完成
 
-- 尚未連接 Firebase 或進行多支手機實機測試。
+- 尚未進行多支實體手機的完整比賽與正式活動參數校正。
 
 ### GitHub 發布
 
@@ -43,4 +43,17 @@
 - 紅／綠檢查直接讀取正式 `firebase-config.js`，確認 `apiKey` 與 `databaseURL` 皆為 `null`，因此穩定重現「無共享後端」的失敗條件。
 - 正式主持台顯示「示範模式」，且瀏覽器 console 無 Firebase Auth／Database 錯誤；可排除已連線後遭 Rules 拒絕的情況。
 - 根因：手機與主持台各自使用隔離的 `localStorage`；`BroadcastChannel` 只同步同一瀏覽器分頁，不能跨裝置。
-- 尚未修改 Firebase：沿用既有專案需新增隔離的資料路徑與 Rules，可能影響提水／龍舟遊戲；建立獨立專案則需要新的 Firebase 設定。等待使用者選擇後再實作與多手機驗收。
+- 使用者選擇沿用既有活動 Firebase，後續修正與驗證如下。
+
+### 沿用 Firebase 與跨裝置同步修正
+
+- 先新增 `npm run test:firebase` 線上 smoke test；在設定仍為空值時穩定失敗，錯誤指出缺少 `apiKey`、`databaseURL`、`projectId`。
+- 填入既有活動 Firebase Web 公開設定後再次測試，匿名登入成功，但寫入原訂 `mooncake-feast-race/rooms` 頂層路徑收到 HTTP 401 `Permission denied`，確認第二個缺口是已部署 Rules 未授權該頂層。
+- 本機沒有 Firebase 管理登入，無法安全匯出與合併線上完整 Rules；為避免覆蓋龍舟與提水規則，改沿用提水已授權的 `water-splash-race/rooms/$room`，並把所有月餅房間集中在 `mooncake-feast-race/<房間碼>` 專屬子樹。
+- 將 `app.js` 與其 `firebase-config.js` import 快取版本更新為 `20260916-2`，避免 GitHub Pages 或手機繼續使用舊的空白 Firebase 設定。
+- `npm run test:firebase` 轉綠：匿名登入、唯一測試房間寫入、讀回、刪除後確認為 `null`，以及刪除匿名測試帳號全部成功。
+- `npm test`：6/6 核心規則測試通過。
+- `npm run check`：`app.js`、`src/game-core.js`、`tests/firebase-smoke.mjs` 語法檢查通過。
+- 實際瀏覽器使用 `FBTEST9` 房間：主持端與玩家端都顯示「即時多人模式」；玩家「瀏覽器同步測試」加入後，主持端即時由 0 人更新為 1 人；玩家離開後主持端回到 0 人。
+- 測試資料清理：精確刪除 `FBTEST9` 房間並確認不存在；清理腳本放在 `work/` 且執行後移除。smoke test 自建房間與匿名帳號也在每次測試後自動刪除。
+- 尚未驗證：兩支實體手機的完整加入、分隊、倒數、連點與勝負流程。

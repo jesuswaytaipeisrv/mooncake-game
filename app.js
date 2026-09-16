@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js";
+import { firebaseConfig, firebaseDataRoot } from "./firebase-config.js?v=20260916-2";
 import {
   TEAM_META,
   STORAGE_PREFIX,
@@ -78,7 +78,7 @@ function clone(value) { return JSON.parse(JSON.stringify(value)); }
 function escapeHtml(value) { return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]); }
 function readCurrentPlayer() { try { const player = JSON.parse(sessionStorage.getItem(playerKey)); return player?.id ? player : null; } catch { return null; } }
 function saveCurrentPlayer(player) { currentPlayer = player; sessionStorage.setItem(playerKey, JSON.stringify(player)); }
-function gamePath() { return `${STORAGE_PREFIX}/rooms/${roomCode}`; }
+function gamePath() { return `${firebaseDataRoot}/${roomCode}`; }
 function teamPlayers(teamId) { return Object.values(game.players).filter((player) => player.team === teamId); }
 
 function playerJoinUrl() {
@@ -565,7 +565,7 @@ function connectDemo() {
 }
 
 async function connectFirebase() {
-  if (!firebaseConfig?.apiKey || !firebaseConfig?.databaseURL || firebaseConfig.apiKey === "YOUR_API_KEY") return false;
+  if (!firebaseConfig?.apiKey || !firebaseConfig?.databaseURL || !firebaseDataRoot || firebaseConfig.apiKey === "YOUR_API_KEY") return false;
   try {
     const [{ initializeApp, getApps }, { getAuth, signInAnonymously }, { getDatabase, ref, onValue, runTransaction, update, increment }] = await Promise.all([
       import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
