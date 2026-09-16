@@ -36,3 +36,11 @@
 - 啟用 GitHub Pages，來源為 `main` 分支根目錄；正式網址為 `https://jesuswaytaipeisrv.github.io/mooncake-game/`。
 - GitHub Pages build 狀態為 `built`；主持台、玩家頁、`app.js`、`styles.css` 與 `src/game-core.js` 均以 HTTP 200 驗證。
 - 實際開啟正式主持台確認自動產生房間碼與正式玩家 QR Code；Firebase 尚未設定，因此目前仍是示範模式。
+
+### 正式站跨裝置同步診斷
+
+- 使用者從手機加入正式房間後，主持台仍顯示 0 人。
+- 紅／綠檢查直接讀取正式 `firebase-config.js`，確認 `apiKey` 與 `databaseURL` 皆為 `null`，因此穩定重現「無共享後端」的失敗條件。
+- 正式主持台顯示「示範模式」，且瀏覽器 console 無 Firebase Auth／Database 錯誤；可排除已連線後遭 Rules 拒絕的情況。
+- 根因：手機與主持台各自使用隔離的 `localStorage`；`BroadcastChannel` 只同步同一瀏覽器分頁，不能跨裝置。
+- 尚未修改 Firebase：沿用既有專案需新增隔離的資料路徑與 Rules，可能影響提水／龍舟遊戲；建立獨立專案則需要新的 Firebase 設定。等待使用者選擇後再實作與多手機驗收。
