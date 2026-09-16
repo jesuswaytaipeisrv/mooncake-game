@@ -17,4 +17,4 @@
 - [x] 使用 `jesuswaytaipeisrv/mooncake-game` 作為公開 GitHub repository，並推送 `main`。
 - [ ] 決定是否沿用既有 Firebase 專案。
 - [ ] 完成 Firebase 多手機實機測試與正式活動參數校正。
-- [ ] 部署 GitHub Pages，確認正式網址與 QR Code。
+- [x] 部署 GitHub Pages，確認主持台、玩家頁、QR Code 與靜態資源可由正式網址載入。

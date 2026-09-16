@@ -6,6 +6,8 @@
 
 GitHub repository：https://github.com/jesuswaytaipeisrv/mooncake-game
 
+線上主持台：https://jesuswaytaipeisrv.github.io/mooncake-game/?view=host
+
 ## 目前功能
 
 - 主持人自動取得六碼房間碼與玩家加入 QR Code。
@@ -50,7 +52,7 @@ Firebase Web App 設定不是伺服器密鑰；服務帳戶 JSON、私密 token 
 
 ## 部署與成本
 
-- Repository 已建立並推送至 GitHub；GitHub Pages 尚未啟用。
+- Repository 已建立並推送至 GitHub；GitHub Pages 已由 `main` 分支根目錄發布。
 - GitHub Pages：公開 repository 可免費部署本靜態網站。
 - Firebase：可先使用 Spark 免費額度；超過免費額度或升級 Blaze 才可能收費，活動前需確認最新方案與用量。
 - 免費替代方案：單機展示可直接使用示範模式；其他即時資料庫可用 Supabase，但需要重寫同步層與權限規則。

@@ -27,10 +27,12 @@
 
 ### 未完成
 
-- 尚未部署 GitHub Pages。
 - 尚未連接 Firebase 或進行多支手機實機測試。
 
 ### GitHub 發布
 
 - 建立公開 repository：`https://github.com/jesuswaytaipeisrv/mooncake-game`。
 - 以原生 Git 將本機 `main` 推送至 `origin/main`，並設定 upstream tracking。
+- 啟用 GitHub Pages，來源為 `main` 分支根目錄；正式網址為 `https://jesuswaytaipeisrv.github.io/mooncake-game/`。
+- GitHub Pages build 狀態為 `built`；主持台、玩家頁、`app.js`、`styles.css` 與 `src/game-core.js` 均以 HTTP 200 驗證。
+- 實際開啟正式主持台確認自動產生房間碼與正式玩家 QR Code；Firebase 尚未設定，因此目前仍是示範模式。
