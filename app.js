@@ -200,7 +200,10 @@ function renderField() {
   }
   const active = game.status === "running" || game.status === "finishing";
   fieldRef.classList.toggle("is-countdown", game.status === "countdown");
-  fieldRef.classList.toggle("is-sprint", Object.keys(TEAM_META).some((teamId) => teamMetrics(game, teamId).progress >= SPRINT_THRESHOLD));
+  fieldRef.classList.toggle("is-sprint", active && Object.keys(TEAM_META).some((teamId) => {
+    const progress = teamMetrics(game, teamId).progress;
+    return progress >= SPRINT_THRESHOLD && progress < 100;
+  }));
   Object.keys(TEAM_META).forEach((teamId) => {
     const metric = teamMetrics(game, teamId);
     const ref = laneRefs[teamId];

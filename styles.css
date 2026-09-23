@@ -173,6 +173,13 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 .field-head h3 { margin: 0; font-size: clamp(22px, 2.5vw, 32px); letter-spacing: -0.035em; }
 .field-hint { max-width: 360px; color: #d9cbea; font-size: 12px; font-weight: 750; text-align: right; }
 .field-scene { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.field-scene::after {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 86% 12%, rgba(255, 239, 174, 0.54) 0 5%, rgba(255, 220, 125, 0.2) 16%, transparent 38%);
+  content: "";
+  opacity: 0;
+}
 .scene-moon {
   position: absolute;
   top: 28px;
@@ -256,7 +263,18 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 .crowd-shirt { position: absolute; top: 14px; left: 2px; width: 17px; height: 14px; border-radius: 7px 7px 3px 3px; background: var(--team); box-shadow: inset 0 -3px rgba(0,0,0,0.12); }
 .crowd-overflow { align-self: center; padding: 1px 5px; border-radius: 99px; color: var(--team-dark); background: white; font-size: 10px; }
 
-.eater { position: absolute; z-index: 4; bottom: 11px; left: 29%; width: 70px; height: 95px; transform: translateX(calc(var(--progress) * 60px)); transition: transform 260ms ease; filter: drop-shadow(0 4px 3px rgba(60,35,40,0.17)); }
+.eater {
+  --eater-travel: clamp(210px, 24vw, 340px);
+  position: absolute;
+  z-index: 4;
+  bottom: 11px;
+  left: clamp(78px, 12%, 104px);
+  width: 70px;
+  height: 95px;
+  transform: translateX(calc(var(--progress) * var(--eater-travel)));
+  transition: transform 260ms ease;
+  filter: drop-shadow(0 4px 3px rgba(60,35,40,0.17));
+}
 .rabbit-ear { position: absolute; z-index: 1; top: 0; width: 15px; height: 34px; border: 3px solid #eadff0; border-radius: 60% 60% 38% 38%; background: #fff; }
 .rabbit-ear::after { position: absolute; inset: 5px 3px; border-radius: inherit; background: #f5bdc8; content: ""; }
 .rabbit-ear.left { left: 18px; transform: rotate(-10deg); }
@@ -272,6 +290,13 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 .eater.is-eating .eater-face b { animation: chew-mouth 330ms ease-in-out infinite alternate; }
 .eater.is-eating .eater-cake { animation: cake-nibble 660ms ease-in-out infinite; }
 .eater.is-eating .crumbs { animation: crumbs 720ms ease-out infinite; }
+.lane.is-near .eater.is-eating .eater-face { animation: finale-head-bob 240ms ease-in-out infinite alternate; }
+.lane.is-near .eater.is-eating .eater-face b { animation: finale-chew 150ms steps(2, end) infinite alternate; }
+.lane.is-near .eater.is-eating .eater-body { animation: finale-body-bounce 240ms ease-in-out infinite alternate; }
+.lane.is-near .eater.is-eating .rabbit-ear.left { animation: finale-ear-left 260ms ease-in-out infinite alternate; }
+.lane.is-near .eater.is-eating .rabbit-ear.right { animation: finale-ear-right 260ms ease-in-out infinite alternate-reverse; }
+.lane.is-near .eater.is-eating .eater-cake { animation: finale-cake-gobble 320ms cubic-bezier(.2,.9,.35,1.35) infinite; }
+.lane.is-near .eater.is-eating .crumbs { color: #c46b27; font-size: 19px; text-shadow: 0 0 7px #fff3ba; animation: finale-crumbs 360ms ease-out infinite; }
 
 .plate { display: grid; place-items: center; width: 100%; min-height: 75px; margin-bottom: 4px; border-radius: 50%; background: radial-gradient(ellipse, #fff 0 54%, #e5d9ed 55% 62%, transparent 63%); }
 .mooncake-row { display: flex; align-items: center; justify-content: center; width: 100%; padding: 0 8px; }
@@ -310,7 +335,8 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 .lane.is-near { animation: lane-near 720ms ease-in-out infinite; }
 .field.is-countdown .crowd-member { animation: crowd-wave 650ms ease-in-out infinite alternate; }
 .field.is-countdown .crowd-member:nth-child(2n) { animation-delay: -0.3s; }
-.field.is-sprint .scene-moon { animation: moon-throb 760ms ease-in-out infinite alternate; }
+.field.is-sprint .field-scene::after { animation: moon-aura 680ms ease-in-out infinite alternate; }
+.field.is-sprint .scene-moon { z-index: 2; animation: moon-throb 680ms ease-in-out infinite alternate; }
 
 .player-view { display: grid; width: min(520px, calc(100% - 32px)); min-height: calc(100vh - 106px); margin: 0 auto; place-items: center; }
 .join-panel { width: 100%; padding: 30px 24px; text-align: center; }
@@ -382,10 +408,18 @@ body[data-view="player"].is-player-joined .player-view { min-height: 100dvh; pad
 @keyframes chew-mouth { to { height: 2px; transform: translateY(2px) scaleX(1.3); } }
 @keyframes cake-nibble { 50% { transform: translate(-2px, -5px) rotate(-8deg) scale(0.91); } }
 @keyframes crumbs { 0% { opacity: 0; transform: translate(0,0); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(15px, 16px) rotate(15deg); } }
+@keyframes finale-head-bob { to { transform: translate(2px, 3px) rotate(4deg) scale(1.09); } }
+@keyframes finale-chew { from { height: 10px; transform: translateY(-2px) scaleX(1.6); } to { height: 2px; transform: translateY(4px) scaleX(0.8); } }
+@keyframes finale-body-bounce { to { transform: translateY(-5px) scale(1.05, 0.92); } }
+@keyframes finale-ear-left { from { transform: rotate(-10deg); } to { transform: rotate(-28deg) translateY(-3px); } }
+@keyframes finale-ear-right { from { transform: rotate(10deg); } to { transform: rotate(28deg) translateY(-3px); } }
+@keyframes finale-cake-gobble { 0%, 100% { transform: translate(0, 0) rotate(0) scale(1); } 45% { transform: translate(-9px, -12px) rotate(-18deg) scale(1.28); } 70% { transform: translate(-4px, -6px) rotate(9deg) scale(0.78); } }
+@keyframes finale-crumbs { 0% { opacity: 0; transform: translate(0, 0) scale(0.6); } 24% { opacity: 1; transform: translate(3px, -5px) scale(1.35); } 100% { opacity: 0; transform: translate(25px, 23px) rotate(24deg) scale(0.8); } }
 @keyframes bunny-hop { to { transform: translateY(-3px) rotate(7deg); } }
 @keyframes lane-near { 50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--team) 35%, transparent), 0 12px 24px rgba(5,2,23,0.2); } }
 @keyframes crowd-wave { to { transform: translateY(calc(var(--crowd-shift) - 5px)) rotate(3deg); } }
-@keyframes moon-throb { to { box-shadow: 0 0 55px rgba(255,223,141,0.95), 0 0 120px rgba(255,222,139,0.5); transform: scale(1.04); } }
+@keyframes moon-aura { from { opacity: 0.42; transform: scale(0.96); } to { opacity: 1; transform: scale(1.08); } }
+@keyframes moon-throb { from { filter: brightness(1.06) saturate(1.05); transform: scale(1.03); } to { box-shadow: 0 0 72px rgba(255,236,174,1), 0 0 145px rgba(255,222,139,0.75), 0 0 230px rgba(255,197,76,0.38); filter: brightness(1.28) saturate(1.16); transform: scale(1.17); } }
 @keyframes tap-flash { 50% { filter: brightness(1.28) saturate(1.14); } }
 @keyframes slow-spin { to { transform: rotate(360deg); } }
 @keyframes bite-float { 0% { opacity: 0; transform: translate(-50%, 12px) scale(0.7); } 35% { opacity: 1; transform: translate(-50%, -15px) scale(1.15); } 100% { opacity: 0; transform: translate(calc(-50% + var(--drift)), -96px) scale(0.9); } }
@@ -399,7 +433,7 @@ body[data-view="player"].is-player-joined .player-view { min-height: 100dvh; pad
   .host-view { grid-template-columns: minmax(270px, 320px) minmax(0, 1fr); }
   .field { padding: 18px; }
   .mooncake { flex-basis: 47px; }
-  .eater { left: 25%; }
+  .eater { --eater-travel: clamp(190px, 23vw, 270px); left: 14%; }
 }
 
 @media (max-width: 920px) {
@@ -407,6 +441,7 @@ body[data-view="player"].is-player-joined .player-view { min-height: 100dvh; pad
   .field { min-height: auto; }
   .host-control-panel { grid-template-columns: 1fr 1fr; }
   .host-command, .roster-band { grid-column: 1 / -1; }
+  .eater { --eater-travel: clamp(220px, 39vw, 340px); left: 12%; }
 }
 
 @media (max-width: 768px) {
@@ -420,7 +455,7 @@ body[data-view="player"].is-player-joined .player-view { min-height: 100dvh; pad
   .lane-track { height: 119px; }
   .mooncake { flex-basis: 44px; }
   .feast-zone { width: 48%; }
-  .eater { left: 25%; transform: translateX(calc(var(--progress) * 22px)) scale(0.92); }
+  .eater { transform: translateX(calc(var(--progress) * var(--eater-travel))) scale(0.92); }
 }
 
 @media (max-width: 560px) {
@@ -445,7 +480,7 @@ body[data-view="player"].is-player-joined .player-view { min-height: 100dvh; pad
   .lane-pct { font-size: 14px; }
   .lane-track { height: 106px; }
   .start-zone { left: 1px; width: 77px; transform: scale(0.83); transform-origin: left bottom; }
-  .eater { bottom: 3px; left: 20%; transform: translateX(calc(var(--progress) * 12px)) scale(0.78); transform-origin: center bottom; }
+  .eater { --eater-travel: clamp(110px, 31vw, 165px); bottom: 3px; left: 15%; transform: translateX(calc(var(--progress) * var(--eater-travel))) scale(0.78); transform-origin: center bottom; }
   .feast-zone { right: 0; width: 52%; transform: scale(0.88); transform-origin: right bottom; }
   .mooncake { flex-basis: 39px; margin-left: -10px; border-width: 3px; }
   .zone-tag { font-size: 8px; }
