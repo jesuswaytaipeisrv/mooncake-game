@@ -84,3 +84,5 @@
 - RWD 實際瀏覽器驗證：390px、768px、1280px 三種同源 iframe 的內容寬度精確符合目標值，`scrollWidth - clientWidth` 均為 0；三種寬度在 90% 都套用兔子與月亮強化動畫。
 - 主持端、玩家端與 RWD 驗收頁的瀏覽器 console 均無 warning 或 error。
 - `VIS923` 測試房已精確刪除並讀回確認為 `null`；測試分頁、暫存 RWD 驗收頁與本機伺服器均已清除或關閉。
+- GitHub Pages 部署 `5487026` 後，以正式站獨立房間 `VFX923` 驗證新版資源；玩家推進至 90% 時，主持台實際套用 `finale-head-bob`、`moon-throb` 與賽末光暈，畫面無水平溢位，console 無 warning 或 error。
+- 正式站驗收後關閉測試分頁，精確刪除 Firebase `VFX923` 房間並讀回確認為 `null`；未改動使用者的 `EDV62A` 房間。
