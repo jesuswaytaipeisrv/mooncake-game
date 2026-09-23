@@ -9,3 +9,4 @@
 - `firebase-database.rules.json` 只適用於未來獨立頂層路徑；共用資料庫規則必須先讀取線上完整版本再合併，不可整份覆蓋。
 - iPhone/iOS 瀏覽器不支援 `navigator.vibrate()`，不得把震動列為必要回饋。
 - 賽末視覺衝刺門檻為 85%；隊伍使用 `.lane.is-near` 強化兔子動作，賽場使用 `.field.is-sprint` 強化月亮，完成 100% 後停止衝刺動畫並顯示結算。
+- 遊戲音效由 `src/game-audio.js` 以 Web Audio API 合成，不依賴外部音檔；音效預設關閉，偏好鍵為 `mooncake-feast-race:sound-enabled`，只存在各瀏覽器，不能寫入 Firebase 遊戲狀態。

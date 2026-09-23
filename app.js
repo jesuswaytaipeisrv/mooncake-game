@@ -1,5 +1,6 @@
 import { firebaseConfig, firebaseDataRoot } from "./firebase-config.js?v=20260916-2";
 import { retryFirebaseNetwork } from "./src/firebase-retry.js?v=20260916-3";
+import { createGameAudio } from "./src/game-audio.js?v=20260923-1";
 import {
   TEAM_META,
   STORAGE_PREFIX,
@@ -43,12 +44,14 @@ let comboCount = 0;
 let lastFxTapAt = 0;
 let comboResetTimer = null;
 let confettiRound = 0;
+let soundSnapshot = null;
 let fieldSignature = "";
 let fieldRef = null;
 const laneRefs = {};
 
 const elements = {
   connectionBadge: document.querySelector("#connection-badge"), roomLabel: document.querySelector("#room-label"),
+  soundToggle: document.querySelector("#sound-toggle"), soundToggleIcon: document.querySelector("#sound-toggle-icon"), soundToggleLabel: document.querySelector("#sound-toggle-label"),
   hostView: document.querySelector("#host-view"), playerView: document.querySelector("#player-view"),
   hostHeading: document.querySelector("#host-heading"), hostCopy: document.querySelector("#host-copy"),
   startButton: document.querySelector("#start-button"), autoAssignButton: document.querySelector("#auto-assign-button"), resetButton: document.querySelector("#reset-button"),
@@ -63,6 +66,7 @@ const elements = {
   winnerOverlay: document.querySelector("#winner-overlay"), winnerTitle: document.querySelector("#winner-title"), winnerCopy: document.querySelector("#winner-copy"), winnerNextButton: document.querySelector("#winner-next-button"),
   winnerMvp: document.querySelector("#winner-mvp"), confetti: document.querySelector("#confetti")
 };
+const gameAudio = createGameAudio();
 
 function normalizeRoomCode(value) {
   return String(value || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 32);
@@ -87,6 +91,64 @@ function playerJoinUrl() {
   url.searchParams.set("view", "play");
   url.searchParams.set("room", roomCode);
   return url.toString();
+}
+
+function renderSoundControl() {
+  const supported = gameAudio.isSupported();
+  const enabled = supported && gameAudio.isEnabled();
+  elements.soundToggle.disabled = !supported;
+  elements.soundToggle.classList.toggle("is-on", enabled);
+  elements.soundToggle.setAttribute("aria-pressed", String(enabled));
+  elements.soundToggleIcon.textContent = enabled ? "🔊" : "🔇";
+  elements.soundToggleLabel.textContent = supported ? (enabled ? "音效開" : "音效關") : "不支援音效";
+  const action = enabled ? "關閉遊戲音效" : "開啟遊戲音效";
+  elements.soundToggle.setAttribute("aria-label", supported ? action : "此瀏覽器不支援遊戲音效");
+  elements.soundToggle.title = supported ? action : "此瀏覽器不支援遊戲音效";
+}
+
+function playSoundCue(cue, count = 1) {
+  const played = cue === "chew"
+    ? gameAudio.playChew(count)
+    : cue === "sprint"
+      ? gameAudio.playSprint()
+      : cue === "victory"
+        ? gameAudio.playVictory()
+        : gameAudio.playReady();
+  if (played) elements.soundToggle.dataset.lastEffect = cue;
+}
+
+async function toggleGameSound() {
+  const enabled = await gameAudio.setEnabled(!gameAudio.isEnabled());
+  renderSoundControl();
+  elements.soundToggle.dataset.lastEffect = enabled ? "ready" : "muted";
+  if (enabled) gameAudio.playReady();
+}
+
+function currentSoundSnapshot() {
+  const totalBites = Object.keys(TEAM_META).reduce((sum, teamId) => sum + Number(game.teams[teamId]?.biteUnits || 0), 0);
+  const sprintTeams = Object.keys(TEAM_META).filter((teamId) => {
+    const progress = teamMetrics(game, teamId).progress;
+    return progress >= SPRINT_THRESHOLD && progress < 100;
+  });
+  return {
+    round: game.round,
+    status: game.status,
+    totalBites,
+    sprintKey: sprintTeams.length ? `${game.round}:${sprintTeams.join(",")}` : "",
+    winnerKey: game.status === "finished" && game.winner ? `${game.round}:${game.winner}` : ""
+  };
+}
+
+/** 播放狀態轉換音效；即使目前靜音仍更新快照，避免之後補播過期事件。 */
+function renderGameSounds() {
+  const next = currentSoundSnapshot();
+  if (!soundSnapshot) { soundSnapshot = next; return; }
+  if (isHost && next.round === soundSnapshot.round && next.status === "running" && next.totalBites > soundSnapshot.totalBites) {
+    playSoundCue("chew", next.totalBites - soundSnapshot.totalBites);
+  }
+  if (next.sprintKey && next.sprintKey !== soundSnapshot.sprintKey) playSoundCue("sprint");
+  if (next.winnerKey && next.winnerKey !== soundSnapshot.winnerKey) playSoundCue("victory");
+  soundSnapshot = next;
 }
 
 function shareMessage() {
@@ -272,6 +334,8 @@ function render() {
     if (joined) renderPlayerPanel();
   }
   renderWinner();
+  renderSoundControl();
+  renderGameSounds();
 }
 
 function renderWinner() {
@@ -405,6 +469,7 @@ function triggerTapFeedback() {
   comboCount = now - lastFxTapAt < 650 ? comboCount + 1 : 1;
   lastFxTapAt = now;
   try { navigator.vibrate?.(comboCount >= 10 ? 24 : 12); } catch { /* iOS browsers do not support vibration. */ }
+  playSoundCue("chew");
   spawnTapBurst();
   elements.tapButton.classList.remove("tap-pop");
   void elements.tapButton.offsetWidth;
@@ -530,6 +595,10 @@ async function reconcileGameClock() {
 }
 
 function bindEvents() {
+  elements.soundToggle.addEventListener("click", () => toggleGameSound().catch(() => {
+    renderSoundControl();
+  }));
+  document.addEventListener("pointerdown", () => { gameAudio.unlock().catch(() => {}); }, { capture: true, once: true });
   elements.joinForm.addEventListener("submit", joinGame);
   elements.tapButton.addEventListener("pointerdown", sendTapFromPointer);
   elements.tapButton.addEventListener("click", sendTapFromClick);

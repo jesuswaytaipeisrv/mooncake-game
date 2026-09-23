@@ -15,6 +15,7 @@ GitHub repository：https://github.com/jesuswaytaipeisrv/mooncake-game
 - 主持人可設定每個月餅所需口數、月餅數量與倒數秒數。
 - 每次點擊即時增加個人與隊伍口數，主持台同步顯示月餅被吃掉的動畫。
 - 兔子會由隊員席旁一路推進；進度達 85% 後，吃月餅動作與背景圓月會進入加強版衝刺動畫。
+- 加入咀嚼、85% 衝刺與獲勝歡呼音效；右下角音效鈕預設靜音，開啟後會記住該瀏覽器的偏好。玩家進入操作頁後，按鈕移到右上角避免遮住連點區。
 - 落後一個月餅以上的隊伍，會定期獲得半個月餅口數的「月兔加油」。
 - 最先清空月餅盤的隊伍獲勝，結算顯示勝隊前三名貢獻者。
 - 已沿用既有活動 Firebase，可跨手機即時同步；Firebase 連線失敗時才退回 `localStorage` 與 `BroadcastChannel` 示範模式。
@@ -70,6 +71,7 @@ Firebase Web App 設定不是伺服器密鑰；服務帳戶 JSON、私密 token 
 - `styles.css`：中秋視覺、動畫與 RWD。
 - `app.js`：瀏覽器互動、房間同步與畫面更新。
 - `src/game-core.js`：可單元測試的遊戲規則。
+- `src/game-audio.js`：以 Web Audio API 即時合成遊戲音效，不需外部音檔。
 - `tests/`：核心規則測試與 Firebase 線上 smoke test。
 - `docs/`：架構、設計決策與長期專案知識。
 
